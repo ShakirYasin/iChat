@@ -1,6 +1,6 @@
 import { AddIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
-import { Box, Button, color, Flex, Input, InputGroup, InputRightElement, Text, useBoolean, VisuallyHiddenInput, VStack } from "@chakra-ui/react"
-import { useRef, useState } from "react"
+import { Box, Button, color, Flex, Input, InputGroup, InputRightElement, Text, useBoolean, useToast, VisuallyHiddenInput, VStack } from "@chakra-ui/react"
+import { useEffect, useRef, useState } from "react"
 import { useForm } from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -74,13 +74,17 @@ export const LoginForm = () => {
 export const SignUpForm = () => {
     const [showPass, setShowPass] = useBoolean()
     const imageRef = useRef(null)
+    const [loading, setLoading] = useState(false)
+    const toast = useToast()
 
     const {
         register, 
         handleSubmit, 
+        setValue,
+        getValues,
         formState: {
             errors,
-            isSubmitting
+            isSubmitting,
         }
     } = useForm({
         values: {
@@ -92,6 +96,54 @@ export const SignUpForm = () => {
         },
         resolver: zodResolver(signupSchema)
     })
+
+    useEffect(() => {
+        console.log({values: getValues()});
+    }, [getValues()]) 
+
+    const postDetails = (file) => {
+        setLoading(true);
+        if(file === undefined) {
+            toast({
+                title: "Please Select an Image!",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom"
+            })
+            return;
+        }
+
+        if(file.type === 'image/jpeg' || file.type === 'image/png') {
+            const data = new FormData()
+            data.append('file', file);
+            data.append('upload_preset', 'iChat-app')
+            data.append('cloud_name', 'dzikwshsv')
+            fetch('https://api.cloudinary.com/v1_1/dzikwshsv/image/upload', {
+                method: "POST",
+                body: data,
+            }).then((res) => res.json())
+            .then((data) => {
+                setValue('image', data.url.toString())
+                console.log(data);
+                setLoading(false)
+            })
+            .catch(err => {
+                console.log(err);
+                setLoading(false)
+            })
+        } else {
+            toast({
+                title: "Please Select either JPEG or PNG image type...",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom"
+            })
+            setLoading(false)
+            return;
+        }
+    }
 
     const submit = (values) => {
         console.log({values});
@@ -131,7 +183,7 @@ export const SignUpForm = () => {
                     <Text color={"whiteAlpha.400"} textAlign={"start"} >Upload Profile Image</Text>
                     <VisuallyHiddenInput type={"file"} ref={imageRef} accept={"image/*"} onChange={(e) => postDetails(e.target.files[0])} />
                 </Flex>
-                <Button type="submit" width={"full"} bg={"teal"}>SignUp</Button>
+                <Button isLoading={loading} type="submit" width={"full"} bg={"teal"}>SignUp</Button>
             </VStack>
         </form>
     )
