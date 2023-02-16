@@ -10,6 +10,7 @@ import theme from './theme'
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
 import Chat from "./pages/ChatPage"
 import Home from "./pages/HomePage"
+import {QueryClient, QueryClientProvider} from 'react-query'
 
 
 const router = createBrowserRouter([
@@ -23,10 +24,14 @@ const router = createBrowserRouter([
   }
 ])
 
+const queryClient = new QueryClient() 
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </QueryClientProvider>
   </React.StrictMode>,
 )

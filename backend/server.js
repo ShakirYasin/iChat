@@ -3,12 +3,17 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const colors = require('colors');
 const {notFound, errorHandler} = require('../backend/middleware/errorMiddleware')
+const cors = require('cors');
 
 dotenv.config()
 connectDB()
 const app = express()
 
 app.use(express.json())
+app.use(cors({
+    origin: '*',
+    // credentials: true,
+}))
 
 app.get('/', (req, res) => {
     res.send('API is running successfully')

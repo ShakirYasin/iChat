@@ -1,16 +1,18 @@
-import { AddIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
-import { Box, Button, color, Flex, Input, InputGroup, InputRightElement, Text, useBoolean, useToast, VisuallyHiddenInput, VStack } from "@chakra-ui/react"
+import { AddIcon, CheckIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons"
+import { Box, Button, color, Flex, FormControl, FormErrorMessage, Image, Input, InputGroup, InputRightElement, Spinner, Text, useBoolean, useToast, VisuallyHiddenInput, VStack } from "@chakra-ui/react"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { useSignUp } from "../../hooks/useMutation"
+import {useNavigate} from 'react-router-dom'
 
 const signupSchema = z.object({
     name: z.string().min(2, {message: "Required"}),
     email: z.string().email().min(2, {message: "Required"}),
     password: z.string().min(2, {message: "Required"}),
     confirmPassword: z.string().min(2, {message: "Required"}),
-    image: z.string().min(2, {message: "Required"}),
+    picture: z.string().min(2, {message: "Required"}),
 }).superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
@@ -76,6 +78,7 @@ export const SignUpForm = () => {
     const imageRef = useRef(null)
     const [loading, setLoading] = useState(false)
     const toast = useToast()
+    const navigate = useNavigate()
 
     const {
         register, 
@@ -84,7 +87,6 @@ export const SignUpForm = () => {
         getValues,
         formState: {
             errors,
-            isSubmitting,
         }
     } = useForm({
         values: {
@@ -92,15 +94,10 @@ export const SignUpForm = () => {
             email: "",
             password: "",
             confirmPassword: "",
-            image: "",
+            picture: "",
         },
         resolver: zodResolver(signupSchema)
     })
-
-    useEffect(() => {
-        console.log({values: getValues()});
-    }, [getValues()]) 
-
     const postDetails = (file) => {
         setLoading(true);
         if(file === undefined) {
@@ -124,8 +121,7 @@ export const SignUpForm = () => {
                 body: data,
             }).then((res) => res.json())
             .then((data) => {
-                setValue('image', data.url.toString())
-                console.log(data);
+                setValue('picture', data.url.toString(), {shouldValidate: true, shouldDirty: true})
                 setLoading(false)
             })
             .catch(err => {
@@ -145,45 +141,99 @@ export const SignUpForm = () => {
         }
     }
 
+    const {
+        mutate: signUp,
+        isLoading
+    } = useSignUp({
+        onSuccess: (data) => {
+            toast({
+                title: "Success",
+                status: "success",
+                description: "Registration Successfull...",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom"
+            })
+            localStorage.setItem('iChat_user', JSON.stringify(data))
+            navigate('/chat')
+        },
+        onError: (err) => {
+            console.log(err);
+            // toast({
+            //     title: "Error",
+            //     status: "danger",
+            //     duration: 5000,
+            //     isClosable: true,
+            //     position: "bottom"
+            // })
+        }
+    })
+
     const submit = (values) => {
-        console.log({values});
+        const {confirmPassword, ...data} = values
+        signUp({...data})
     }
 
     return (
-        <form onSubmit={handleSubmit(submit)}>
+        <form noValidate onSubmit={handleSubmit(submit)}>
             <VStack spacing={3} mt={4}>
-                <Input width={"full"} placeholder='Name' type={"text"} isInvalid={errors.name} {...register('name')} />
-                <Input width={"full"} placeholder='Email' type={"email"} isInvalid={errors.email} {...register('email')} />
-                <InputGroup>
-                    <Input type={showPass ? "text" : "password"} placeholder='Password' isInvalid={errors.password} {...register('password')} />
-                    <InputRightElement width='3.5rem'>
-                    <Button h='1.75rem' size='sm' onClick={setShowPass.toggle}>
-                        {showPass ? 
-                        <ViewOffIcon />
-                        : 
-                        <ViewIcon />
+                {loading ? (
+                    <Spinner />
+                ):
+                getValues().picture && (
+                    <Image src={getValues().picture} width={150} height={150} alt={""} borderRadius={"50%"} objectFit={"cover"} objectPosition={"top"} />
+                )}
+                <FormControl isInvalid={errors.name}>
+                    <Input width={"full"} placeholder='Name' type={"text"} {...register('name')} />
+                    <FormErrorMessage>{errors?.name?.message}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={errors.email}>
+                    <Input width={"full"} placeholder='Email' type={"email"} {...register('email')} />
+                    <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={errors.password}>
+                    <InputGroup>
+                        <Input type={showPass ? "text" : "password"} placeholder='Password' {...register('password')} />
+                        <InputRightElement width='3.5rem'>
+                        <Button h='1.75rem' size='sm' onClick={setShowPass.toggle}>
+                            {showPass ? 
+                            <ViewOffIcon />
+                            : 
+                            <ViewIcon />
                         }
-                    </Button>
-                    </InputRightElement>
-                </InputGroup>
-                <InputGroup>
-                    <Input type={showPass ? "text" : "password"} placeholder='Confirm Password' isInvalid={errors.confirmPassword} {...register('confirmPassword')} />
-                    <InputRightElement width='3.5rem'>
-                    <Button h='1.75rem' size='sm' onClick={setShowPass.toggle}>
-                        {showPass ? 
-                        <ViewOffIcon />
-                        : 
-                        <ViewIcon />
+                        </Button>
+                        </InputRightElement>
+                    </InputGroup>
+                    <FormErrorMessage>{errors?.password?.message}</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={errors.confirmPassword}>
+                    <InputGroup>
+                        <Input type={showPass ? "text" : "password"} placeholder='Confirm Password' {...register('confirmPassword')} />
+                        <InputRightElement width='3.5rem'>
+                        <Button h='1.75rem' size='sm' onClick={setShowPass.toggle}>
+                            {showPass ? 
+                            <ViewOffIcon />
+                            : 
+                            <ViewIcon />
                         }
-                    </Button>
-                    </InputRightElement>
-                </InputGroup>
-                <Flex align={"center"} gap={"10px"} border={"1px solid rgba(255,255,255,0.16)"} borderRadius={"5px"} width={"full"} p={"5px 8px"} cursor={"pointer"} onClick={() => imageRef.current.click()}>
-                    <AddIcon color={"whiteAlpha.400"}/>
-                    <Text color={"whiteAlpha.400"} textAlign={"start"} >Upload Profile Image</Text>
-                    <VisuallyHiddenInput type={"file"} ref={imageRef} accept={"image/*"} onChange={(e) => postDetails(e.target.files[0])} />
+                        </Button>
+                        </InputRightElement>
+                    </InputGroup>
+                    <FormErrorMessage>{errors?.confirmPassword?.message}</FormErrorMessage>
+                </FormControl>
+                <Flex align={"center"} gap={"10px"} borderWidth={(errors.picture && !getValues().picture) ? "2.5px" : "1px"} borderColor={(errors.picture && !getValues().picture) ? "red.300" : "rgba(255,255,255,0.16)"} borderRadius={"5px"} width={"full"} p={"7px 10px"} cursor={"pointer"} onClick={() => imageRef.current.click()}>
+                    {getValues().picture ? 
+                        <CheckIcon color={'teal'} />
+                        :
+                        <AddIcon color={"whiteAlpha.400"}/>
+                    }
+                    <Text color={getValues().picture ? "teal" : "whiteAlpha.400"} textAlign={"start"} >Upload Profile Image</Text>
                 </Flex>
-                <Button isLoading={loading} type="submit" width={"full"} bg={"teal"}>SignUp</Button>
+                <FormControl isInvalid={errors.picture}>
+                    <VisuallyHiddenInput type={"file"} ref={imageRef} accept={"image/*"} onChange={(e) => postDetails(e.target.files[0])} />
+                    <FormErrorMessage mt={0}>{errors?.picture?.message}</FormErrorMessage>
+                </FormControl>
+                <Button isLoading={isLoading} type="submit" width={"full"} bg={"teal"}>SignUp</Button>
             </VStack>
         </form>
     )
