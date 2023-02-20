@@ -136,7 +136,7 @@ const addToGroup = asyncHandler(async(req, res) => {
            $push: { users: userId }, 
         },
         {
-            new: tru
+            new: true
         }
     )
     .populate("users", "-password")
@@ -160,7 +160,7 @@ const removeFromGroup = asyncHandler(async(req, res) => {
            $pull: { users: userId }, 
         },
         {
-            new: tru
+            new: true
         }
     )
     .populate("users", "-password")

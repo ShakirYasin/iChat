@@ -1,9 +1,22 @@
+import { Box, Flex } from '@chakra-ui/react';
 import React from 'react'
+import { useChatContext } from '../Context/ChatProvider'
+import Navbar from "../components/layout/Navbar"
+import MyChats from "../components/MyChats"
+import ChatBox from "../components/ChatBox"
 
 const Chat = () => {
 
+  const {user} = useChatContext();
+
   return (
-    <div>Chat</div>
+    <Box>
+      <Navbar />
+      <Flex justify={"space-between"} w={"100%"} h={"91.5vh"} p={"10px"}>
+        <MyChats />
+        <ChatBox />
+      </Flex>
+    </Box>
   )
 }
 

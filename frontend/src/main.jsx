@@ -4,34 +4,38 @@ import "@fontsource/montserrat/600.css"
 import "@fontsource/montserrat/900.css"
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import {ChakraProvider} from "@chakra-ui/react"
 import theme from './theme'
-import {createBrowserRouter, RouterProvider} from "react-router-dom"
+import {createBrowserRouter, RouterProvider, Outlet} from "react-router-dom"
 import Chat from "./pages/ChatPage"
 import Home from "./pages/HomePage"
 import {QueryClient, QueryClientProvider} from 'react-query'
-
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Home />
-  },
-  {
-    path: '/chat',
-    element: <Chat />
-  }
-])
+import ChatProvider from "./Context/ChatProvider"
 
 const queryClient = new QueryClient() 
+const router = createBrowserRouter([
+  {
+    element: (
+      <ChatProvider>
+        <QueryClientProvider client={queryClient}>
+          <ChakraProvider theme={theme}> 
+            <Outlet/>
+          </ChakraProvider>
+        </QueryClientProvider>
+      </ChatProvider>
+    ),
+    children: [
+      {path: '/chat', element: <Chat />},
+      {index: true, element: <Home /> },
+    ]
+  },
+ 
+])
+
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
-    </QueryClientProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )
