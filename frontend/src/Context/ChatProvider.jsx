@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState} from "react"
 import { useNavigate } from "react-router-dom";
+import axios from '../../utils/axios'
 
 const ChatContext = createContext(null);
 
@@ -20,6 +21,7 @@ const ChatProvider = ({children}) => {
             navigate('/')
         }else {
             setUser(userInfo)
+            axios.defaults.headers['Authorization'] = `Bearer ${userInfo?.token}`
         }
     }, [])
 

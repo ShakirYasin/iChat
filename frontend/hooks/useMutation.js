@@ -21,7 +21,7 @@ export const useSignUp = (options) => {
         )
     }
     
-    export const useLogin = (options) => {
+export const useLogin = (options) => {
         const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
