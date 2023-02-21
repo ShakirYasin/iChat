@@ -6,8 +6,21 @@ export const useSearch = (keyword = "", options) => {
     return useQuery({
         queryKey: ['search', keyword],
         queryFn: async () => {
-            return await axios.get(`/user?search=${keyword}`)
+            const {data} = await axios.get(`/user?search=${keyword}`)
+            return data
         },
+        ...options
+    })
+}
+    
+export const useFetchChats = (options) => {
+    return useQuery({
+        queryKey: ['search'],
+        queryFn: async () => {
+            const {data} = await axios.get(`/chat`)
+            return data
+        },
+        refetchOnWindowFocus: false,
         ...options
     })
 }

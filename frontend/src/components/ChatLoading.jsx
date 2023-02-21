@@ -5,7 +5,7 @@ const ChatLoading = ({vertCount}) => {
   return (
     <Stack>
         {Array.from(Array(vertCount).keys()).map(item => (
-            <Skeleton height={"25px"} />
+            <Skeleton key={item} height={"25px"} />
         ))}
     </Stack>
   )

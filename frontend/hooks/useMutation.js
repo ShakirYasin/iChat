@@ -22,7 +22,7 @@ export const useSignUp = (options) => {
     }
     
 export const useLogin = (options) => {
-        const {setUser} = useChatContext()
+    const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
             const {data} = await axios.post('/user/login', values);
@@ -35,6 +35,27 @@ export const useLogin = (options) => {
                 setUser(data)
                 axios.defaults.headers['Authorization'] = `Bearer ${data?.token}`
                 options?.onSuccess?.(data);
+            } 
+        }
+    )
+}
+    
+export const useAccessChat = (options) => {
+    const {setSelectedChat} = useChatContext()
+    return useMutation(
+        async ({userId}) => {
+            const {data} = await axios.post('/chat', {userId});
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({AccessChatResponse: data});
+                setSelectedChat(data)
+                options?.onSuccess?.(data);
+            },
+            onError: (err) => {
+                options?.onError?.(err);
             } 
         }
     )
