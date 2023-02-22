@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {Avatar, Box, Button, Flex, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, Tooltip, useDisclosure} from '@chakra-ui/react'
 import {BellIcon, Search2Icon, ChevronDownIcon} from '@chakra-ui/icons'
 import {useChatContext} from "../../Context/ChatProvider"
 import ProfileModal from '../modals/ProfileModal'
 import SideDrawer from '../SideDrawer'
+import SearchModal from '../modals/SearchModal'
 
 const Navbar = () => {
   const {user, Logout} = useChatContext()
@@ -12,12 +13,15 @@ const Navbar = () => {
   return (
     <>
       <Flex align={"center"} justify={"space-between"} p={"5px 10px"}>
-        <Tooltip label="Search Users to Chat" hasArrow variant={""} placement='bottom'>
-          <Button variant={"solid"} onClick={onOpen}>
-            <Search2Icon />
-            <Text display={{base: "none", md: "flex"}} px={"4"}>Search User</Text>
-          </Button>
-        </Tooltip>
+        <SearchModal>
+          <Tooltip label="Search Users to Chat" hasArrow variant={""} placement='bottom'>
+            <Button variant={"solid"}>
+              <Search2Icon />
+              <Text display={{base: "none", md: "flex"}} px={"4"}>Search User</Text>
+              <Text fontSize={"12px"} opacity={0.5} ml={5}>Ctrl + K</Text>
+            </Button>
+          </Tooltip>
+        </SearchModal>
         <Text fontSize={"2xl"} color={"teal.300"}>iChat</Text>
         <Box>
           <Menu>
@@ -47,7 +51,6 @@ const Navbar = () => {
           </Menu>
         </Box>
       </Flex>
-      <SideDrawer onClose={onClose} isOpen={isOpen} />
     </>
   )
 }

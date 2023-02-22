@@ -30,7 +30,7 @@ const SideDrawer = ({onClose, isOpen}) => {
         isLoading: accessingChat
     } = useAccessChat({
         onSuccess: (data) => {
-            if(chats?.find((c) => c._id === data._id)) setChats(prev => [data, ...prev])
+            if(!chats?.find((c) => c._id === data._id)) setChats(prev => [data, ...prev])
         },
         onError: (err) => {
             toast({
