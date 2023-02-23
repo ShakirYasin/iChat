@@ -15,6 +15,8 @@ const ChatProvider = ({children}) => {
         localStorage.removeItem('iChat_user')
         setUser(null)
         navigate('/')
+        setSelectedChat(null)
+        setChats([])
     }
 
     useEffect(() => {

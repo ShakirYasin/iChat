@@ -15,11 +15,11 @@ const UserChatItem = ({chat, handleFn}) => {
         onClick={handleFn}
         mt={"0!important"}
         cursor={"pointer"}
-        bg={selectedChat === chat ? "whiteAlpha.200" : "transparent"}
-        borderBottomWidth={selectedChat === chat  ? 1 : 0}
-        borderBottomColor={selectedChat === chat ? "teal.800" : "whiteAlpha.300"}
-        borderRightWidth={selectedChat === chat ? 6 : 0}
-        borderRightColor={selectedChat === chat ? "teal" : "whiteAlpha.300"}
+        bg={selectedChat?._id === chat?._id ? "whiteAlpha.200" : "transparent"}
+        borderBottomWidth={selectedChat?._id === chat?._id  ? 1 : 0}
+        borderBottomColor={selectedChat?._id === chat?._id ? "teal.800" : "whiteAlpha.300"}
+        borderRightWidth={selectedChat?._id === chat?._id ? 6 : 0}
+        borderRightColor={selectedChat?._id === chat?._id ? "teal" : "whiteAlpha.300"}
         color={"white"}
         px={3}
         py={3}
@@ -31,11 +31,11 @@ const UserChatItem = ({chat, handleFn}) => {
                 height={55}
                 rounded={"full"}
                 borderWidth={3}
-                borderColor={selectedChat === chat ? "teal.500" : "whiteAlpha.300"}
+                borderColor={selectedChat?._id === chat?._id ? "teal.500" : "whiteAlpha.300"}
                 borderStyle={"solid"}
             />
             <Box>
-                <Text ml={selectedChat === chat ? 6 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat === chat ? "teal.300" : ""} >
+                <Text ml={selectedChat?._id === chat?._id ? 6 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat?._id === chat?._id ? "teal.300" : ""} >
                     {!chat.isGroup ? (
                     getSender(user, chat.users)?.name
                     ) : ( chat.chatName )}
