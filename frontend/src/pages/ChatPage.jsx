@@ -6,13 +6,13 @@ import MyChats from "../components/MyChats"
 import ChatBox from "../components/ChatBox"
 
 const Chat = () => {
-
+ 
   const {user} = useChatContext();
 
   return user && (
     <Box>
       <Navbar />
-      <Flex justify={"space-between"} w={"100%"} h={"91.5vh"} p={"10px"}>
+      <Flex justify={"space-between"} w={"100%"} h={"91.5vh"} p={"10px"} gap={5}>
         <MyChats />
         <ChatBox />
       </Flex>

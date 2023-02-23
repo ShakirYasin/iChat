@@ -5,18 +5,18 @@ import { useChatContext } from '../../Context/ChatProvider'
 import { useSearch } from '../../../hooks/useQuery'
 import { useAccessChat } from '../../../hooks/useMutation'
 import ChatLoading from '../ChatLoading'
-import UserListItem from '../UserAvatar/UserListItem'
+import UserListItem from '../User/UserListItem'
 import useDebounce from '../../../hooks/useDebounce'
 
 
-const SearchModal = ({children}) => {
+const SearchModal = ({children, isOpen, onOpen, onClose}) => {
 
-    const {isOpen, onOpen, onClose} = useDisclosure()
+    
     const [search, setSearch] = useState('')
     const [go, setGo] = useState(false)
     const toast  = useToast()
     const debouncedSearch = useDebounce(search, 500)
-    const {chats, setChats} = useChatContext()
+    const {chats, setChats, setSelectedChat} = useChatContext()
 
     const {data: users, isLoading} = useSearch(debouncedSearch, {
         enabled: debouncedSearch !== "",
@@ -34,7 +34,13 @@ const SearchModal = ({children}) => {
         isLoading: accessingChat
     } = useAccessChat({
         onSuccess: (data) => {
-            if(!chats?.find((c) => c._id === data._id)) setChats(prev => [data, ...prev])
+            if(!chats?.find((c) => c._id === data._id)) {
+                setChats(prev => [data, ...prev])
+            }
+            // else {
+            //     const filtered = chats.filter(c => c?._id !== data?._id)
+            //     setChats([data, ...filtered])
+            // }
         },
         onError: (err) => {
             toast({
@@ -44,7 +50,7 @@ const SearchModal = ({children}) => {
                 duration: 5000,
                 isClosable: true,
                 position: "bottom-left"  
-            })  
+            })
         }
     })
     
@@ -77,26 +83,12 @@ const SearchModal = ({children}) => {
         // setGo(false)
     }
 
-    
-  useEffect(() => {
-    const keyDownHandler = (e) => {
-      if (e.ctrlKey && e.key === "k") {
-        e.preventDefault();
-        onOpen()
-      }
-    };
-    window.addEventListener('keydown', keyDownHandler);
 
-    return () => {
-      window.removeEventListener('keydown', keyDownHandler)
-    }
-
-  }, [])
     
   return (
     <>
       <Box as='span' onClick={onOpen} p={0}>{children}</Box>
-      <Modal size={"lg"} onClose={close} isOpen={isOpen} isCentered>
+      <Modal size={"lg"} onClose={close} isOpen={isOpen} >
         <ModalOverlay />
         <ModalContent shadow={"none"}>
             <ModalBody>

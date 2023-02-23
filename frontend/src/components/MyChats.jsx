@@ -1,15 +1,16 @@
 import { AddIcon, HamburgerIcon } from '@chakra-ui/icons'
-import { Box, Button, Flex, Menu, MenuButton, MenuItem, MenuList, Stack, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Stack, Text, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useFetchChats } from '../../hooks/useQuery'
 import { getSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
 import ChatLoading from './ChatLoading'
 import GroupChatModal from './modals/GroupChatModal'
+import UserChatItem from './User/UserChatItem'
 
 
 const MyChats = () => {
-  const {selectedChat, setSelectedChat, user, chats, setChats} = useChatContext()
+  const {selectedChat, setSelectedChat, chats, setChats} = useChatContext()
   const [loggedUser, setLoggedUser] = useState(null)
   const toast = useToast();
   const {
@@ -36,7 +37,7 @@ const MyChats = () => {
     <Box
       display={{base: selectedChat ? "none" : "flex", md: "flex"}}
       flexDir={"column"}
-      p={3}
+      py={3}
       w={{base: "full", md: "30%", xl: "25%", "2xl": "17%"}}
       borderRadius={"lg"}
       borderWidth={"1px"}
@@ -44,7 +45,8 @@ const MyChats = () => {
       <Flex
         columnGap={3}
         pb={3}
-        px={3}
+        px={6}
+        borderBottomWidth={1}
       >
         <Text
           w={"full"}
@@ -59,48 +61,34 @@ const MyChats = () => {
           <MenuList
             py={0}
             >
+              <GroupChatModal>
                 <MenuItem
                   icon={<AddIcon />}
+                  py={3}
                   >
-                  <GroupChatModal>
-                    <Button bg={"transparent"} p={0} _hover={{bg: "transparent"}}>
-                      New Group Chat
-                    </Button>
-                  </GroupChatModal>
+                  New Group Chat
                 </MenuItem>
+              </GroupChatModal>
           </MenuList>
         </Menu>
       </Flex>
 
       <Flex
         direction={"column"}
-        p={3}
+        py={3}
         w={"full"}
         h={"full"}
         borderRadius={"lg"}
         overflowY={"hidden"}
+        gap={0}
       >
         {chats ? (
           <Stack overflowY={"auto"}>
               {chats.map(chat => (
-                <Box
-                  onClick={() => setSelectedChat(chat)}
-                  cursor={"pointer"}
-                  bg={selectedChat === chat ? "teal" : "whiteAlpha.200"}
-                  borderColor={selectedChat === chat ? "transparent" : "teal.700"}
-                  borderWidth={1}
-                  color={"white"}
-                  px={3}
-                  py={2}
-                  borderRadius={"lg"}
-                  key={chat._id}
-                >
-                  <Text>
-                    {!chat.isGroup ? (
-                      getSender(user, chat.users)
-                    ) : ( chat.chatName )}
-                  </Text>
-                </Box>
+                <UserChatItem 
+                  handleFn={() => setSelectedChat(chat)}
+                  chat={chat}
+                />
               ))}
           </Stack>
         ): (

@@ -9,11 +9,24 @@ import SearchModal from '../modals/SearchModal'
 const Navbar = () => {
   const {user, Logout} = useChatContext()
   const {isOpen, onOpen, onClose} = useDisclosure()
+  useEffect(() => {
+    const keyDownHandler = (e) => {
+      if (e.ctrlKey && e.key === "k") {
+        e.preventDefault();
+        onOpen()
+      }
+    };
+    window.addEventListener('keydown', keyDownHandler);
 
+    return () => {
+      window.removeEventListener('keydown', keyDownHandler)
+    }
+
+  }, [])
   return (
     <>
       <Flex align={"center"} justify={"space-between"} p={"5px 10px"}>
-        <SearchModal>
+        <SearchModal isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
           <Tooltip label="Search Users to Chat" hasArrow variant={""} placement='bottom'>
             <Button variant={"solid"}>
               <Search2Icon />

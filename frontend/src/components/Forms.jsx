@@ -67,7 +67,7 @@ export const LoginForm = () => {
             console.log(err);
             toast({
                 title: "Error",
-                status: "danger",
+                status: "error",
                 duration: 5000,
                 isClosable: true,
                 position: "bottom"
@@ -203,7 +203,7 @@ export const SignUpForm = () => {
             toast({
                 title: "Error",
                 description: "Some Error Occurred...",
-                status: "danger",
+                status: "error",
                 duration: 5000,
                 isClosable: true,
                 position: "bottom"

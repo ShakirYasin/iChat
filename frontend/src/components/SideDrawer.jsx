@@ -4,7 +4,7 @@ import useDebounce from "../../hooks/useDebounce"
 import { useSearch } from '../../hooks/useQuery'
 import { useAccessChat } from '../../hooks/useMutation'
 import ChatLoading from './ChatLoading'
-import UserListItem from "../../src/components/UserAvatar/UserListItem"
+import UserListItem from "./User/UserListItem"
 import { useChatContext } from '../Context/ChatProvider'
 
 

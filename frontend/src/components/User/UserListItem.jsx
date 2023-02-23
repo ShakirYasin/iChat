@@ -1,7 +1,7 @@
 import { Avatar, Box, Flex, Text } from '@chakra-ui/react'
 import React from 'react'
 
-const UserListItem = ({user, handleFn}) => {
+const UserListItem = ({user, handleFn, users, i}) => {
   return (
     <Flex
         onClick={handleFn}
@@ -15,7 +15,7 @@ const UserListItem = ({user, handleFn}) => {
         w={"full"}
         px={3}
         py={2}
-        mb={2}
+        mb={i+1 === users?.length ? 0 : 2}
         borderRadius={"lg"}
         gap={2}
     >

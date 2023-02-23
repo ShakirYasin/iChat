@@ -60,3 +60,25 @@ export const useAccessChat = (options) => {
         }
     )
 }
+    
+export const useCreateGroupChat = (options) => {
+    const {setSelectedChat, setChats} = useChatContext()
+    return useMutation(
+        async (values) => {
+            const {data} = await axios.post('/chat/group', values);
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({CreateGroupChat: data});
+                setChats(prev => [data, ...prev])
+                setSelectedChat(data)
+                options?.onSuccess?.(data);
+            },
+            onError: (err) => {
+                options?.onError?.(err);
+            } 
+        }
+    )
+}
