@@ -28,7 +28,7 @@ const ChatProvider = ({children}) => {
             axios.defaults.headers['Authorization'] = `Bearer ${userInfo?.token}`
             navigate('/chat')
         }
-    }, [])
+    }, [])  
 
     return <ChatContext.Provider value={{user, setUser, Logout, selectedChat, setSelectedChat, chats, setChats}}>
         {children}
