@@ -10,6 +10,10 @@ const chatModel = mongoose.Schema(
             type: Boolean,
             default: false
         },
+        groupImage: {
+            type: String,
+            default: "https://icon-library.com/images/user-icon-silhouette/user-icon-silhouette-20.jpg"
+        },
         users: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
