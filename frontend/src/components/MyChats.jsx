@@ -82,17 +82,25 @@ const MyChats = () => {
         overflowY={"hidden"}
         gap={0}
       >
-        {chats ? (
-          <Stack overflowY={"auto"}>
-              {chats.map(chat => (
-                <UserChatItem 
-                  handleFn={() => setSelectedChat(chat)}
-                  chat={chat}
-                />
-              ))}
-          </Stack>
-        ): (
-          <ChatLoading /> 
+        {
+          isLoading ? 
+          (
+            <Box px={3}>
+              <ChatLoading vertCount={5} cellHeight={"35px"} />
+            </Box>
+          )
+          :
+          !chats.length ? 
+            <Text align={"center"} color={"whiteAlpha.700"}>Chats Not Found</Text>
+          : (
+            <Stack overflowY={"auto"}>
+                {chats.map(chat => (
+                  <UserChatItem 
+                    handleFn={() => setSelectedChat(chat)}
+                    chat={chat}
+                  />
+                ))}
+            </Stack>
         )}
       </Flex>
     </Box>

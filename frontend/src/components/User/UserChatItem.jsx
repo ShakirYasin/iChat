@@ -26,7 +26,7 @@ const UserChatItem = ({chat, handleFn}) => {
         key={chat._id}
         >
             <Image 
-                src={getSender(user, chat.users)?.picture}
+                src={chat?.isGroup ? chat?.groupImage : getSender(user, chat.users)?.picture}
                 width={55}
                 height={55}
                 rounded={"full"}
