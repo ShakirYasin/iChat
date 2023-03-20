@@ -67,8 +67,8 @@ const close = () => {
 }
 
 const handleGroup = (user) => {
-  if(selectedUsers.includes(user)) return;
-
+  if(selectedUsers.find(item => item?._id === user?._id)) return
+  
   setSelectedUsers([...selectedUsers, user])
 }
 

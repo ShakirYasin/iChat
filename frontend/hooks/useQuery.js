@@ -15,7 +15,7 @@ export const useSearch = (keyword = "", options) => {
     
 export const useFetchChats = (options) => {
     return useQuery({
-        queryKey: ['search'],
+        queryKey: ['chats'],
         queryFn: async () => {
             const {data} = await axios.get(`/chat`)
             return data

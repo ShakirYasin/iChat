@@ -1,9 +1,10 @@
-import { ArrowBackIcon, InfoOutlineIcon } from '@chakra-ui/icons'
+import { ArrowBackIcon, InfoOutlineIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Box, Center, Flex, IconButton, Text } from '@chakra-ui/react'
 import React from 'react'
 import { getSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
 import ProfileModal from './modals/ProfileModal'
+import UpdateGroupChatModal from './modals/UpdateGroupChatModal'
 
 const SingleChat = () => {
     
@@ -39,9 +40,14 @@ const SingleChat = () => {
                         </ProfileModal>
                     </>
                 :
+                <>
                     <Text fontSize={"2xl"} textTransform={"capitalize"}>
-                            {selectedChat?.chatName}
+                        {selectedChat?.chatName}
                     </Text>
+                    <UpdateGroupChatModal>
+                        <SettingsIcon boxSize={19} cursor={"pointer"} />
+                    </UpdateGroupChatModal>
+                </>
                 }
         </Flex>
         <Box

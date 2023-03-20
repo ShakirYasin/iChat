@@ -1,4 +1,4 @@
-import {useMutation} from "react-query"
+import {useMutation, useQueryClient} from "react-query"
 import axios from "../utils/axios"
 import {useChatContext} from "../src/Context/ChatProvider"
 
@@ -74,6 +74,75 @@ export const useCreateGroupChat = (options) => {
                 console.log({CreateGroupChat: data});
                 setChats(prev => [data, ...prev])
                 setSelectedChat(data)
+                options?.onSuccess?.(data);
+            },
+            onError: (err) => {
+                options?.onError?.(err);
+            } 
+        }
+    )
+}
+    
+export const useRenameGroupChat = (options) => {
+    const queryClient = useQueryClient()
+    const {setSelectedChat} = useChatContext()
+    return useMutation(
+        async ({chatId, chatName}) => {
+            const {data} = await axios.put('/chat/rename', {chatId, chatName});
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({RenamedChat: data});
+                queryClient.invalidateQueries("chats")
+                setSelectedChat(data)
+                options?.onSuccess?.(data);
+            },
+            onError: (err) => {
+                options?.onError?.(err);
+            } 
+        }
+    )
+}
+    
+export const useAddUserToGroup = (options) => {
+    const queryClient = useQueryClient()
+    const {setSelectedChat} = useChatContext()
+    return useMutation(
+        async ({chatId, userId}) => {
+            const {data} = await axios.put('/chat/groupadd', {chatId, userId});
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({RenamedChat: data});
+                queryClient.invalidateQueries("chats")
+                setSelectedChat(data)
+                options?.onSuccess?.(data);
+            },
+            onError: (err) => {
+                options?.onError?.(err);
+            } 
+        }
+    )
+}
+    
+export const useRemoveUserFromGroup = (options) => {
+    const queryClient = useQueryClient()
+    const {setSelectedChat} = useChatContext()
+    return useMutation(
+        async ({chatId, userId}) => {
+            const {data} = await axios.put('/chat/groupremove', {chatId, userId});
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({RenamedChat: data});
+                queryClient.invalidateQueries("chats")
+                // setSelectedChat(data)
                 options?.onSuccess?.(data);
             },
             onError: (err) => {

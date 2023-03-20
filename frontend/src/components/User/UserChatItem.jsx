@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Avatar, Box, Flex, Image, Text } from '@chakra-ui/react'
 import React from 'react'
 import { getSender } from '../../config/chatLogics'
 import { useChatContext } from '../../Context/ChatProvider'
@@ -25,14 +25,15 @@ const UserChatItem = ({chat, handleFn}) => {
         py={3}
         key={chat._id}
         >
-            <Image 
+            <Avatar 
                 src={chat?.isGroup ? chat?.groupImage : getSender(user, chat.users)?.picture}
+                name={user?.name}
                 width={55}
                 height={55}
-                rounded={"full"}
                 borderWidth={3}
                 borderColor={selectedChat?._id === chat?._id ? "teal.500" : "whiteAlpha.300"}
                 borderStyle={"solid"}
+                bg={"whiteAlpha.700"}
             />
             <Box>
                 <Text ml={selectedChat?._id === chat?._id ? 6 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat?._id === chat?._id ? "teal.300" : ""} >
