@@ -55,7 +55,7 @@ export const LoginForm = () => {
             toast({
                 title: "Success",
                 status: "success",
-                description: "Registration Successfull...",
+                description: "Login Successfull...",
                 duration: 5000,
                 isClosable: true,
                 position: "bottom"
