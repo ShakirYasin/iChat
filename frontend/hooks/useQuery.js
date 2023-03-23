@@ -1,4 +1,5 @@
 import { useQuery } from "react-query";
+import { useChatContext } from "../src/Context/ChatProvider";
 import axios from '../utils/axios'
 
     
@@ -21,6 +22,21 @@ export const useFetchChats = (options) => {
             return data
         },
         refetchOnWindowFocus: false,
+        ...options
+    })
+}
+    
+export const useFetchMessages = (values, options) => {
+    const {selectedChat} = useChatContext()
+    return useQuery({
+        queryKey: ['messages', selectedChat?._id],
+        queryFn: async () => {
+            const {data} = await axios.get(`/message/${values?.chatId}`)
+            return data
+        },
+        refetchOnWindowFocus: false,
+        enabled: !!selectedChat?._id,
+        
         ...options
     })
 }

@@ -151,3 +151,20 @@ export const useRemoveUserFromGroup = (options) => {
         }
     )
 }
+
+   
+export const useSendMessage = (options) => {
+    return useMutation(
+        async (values) => {
+            const {data} = await axios.post('/message', values);
+            return data;
+        },
+        {
+            ...options,
+            onSuccess: (data) => {
+                console.log({SendMessageResponse: data});
+                options?.onSuccess?.(data);
+            } 
+        }
+    )
+}

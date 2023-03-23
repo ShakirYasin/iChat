@@ -98,6 +98,7 @@ const MyChats = () => {
                   <UserChatItem 
                     handleFn={() => setSelectedChat(chat)}
                     chat={chat}
+                    key={chat?._id}
                   />
                 ))}
             </Stack>
