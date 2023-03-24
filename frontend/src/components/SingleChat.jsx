@@ -25,11 +25,8 @@ const SingleChat = () => {
     const {
         data,
         isLoading: fetchingMessages,
-        refetch
     } = useFetchMessages({
         chatId: selectedChat?._id
-    }, {
-
     })
 
     const sendMessage = (e) => {

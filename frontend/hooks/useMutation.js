@@ -154,6 +154,7 @@ export const useRemoveUserFromGroup = (options) => {
 
    
 export const useSendMessage = (options) => {
+    const {setSelectedChat} = useChatContext()
     return useMutation(
         async (values) => {
             const {data} = await axios.post('/message', values);
@@ -163,6 +164,14 @@ export const useSendMessage = (options) => {
             ...options,
             onSuccess: (data) => {
                 console.log({SendMessageResponse: data});
+                const latestMessage = {
+                    ...data,
+                    chat: data?.chat?._id
+                }
+                setSelectedChat(prev => ({
+                    ...prev,
+                    latestMessage
+                }))
                 options?.onSuccess?.(data);
             } 
         }

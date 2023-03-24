@@ -57,7 +57,7 @@ const fetchChats = asyncHandler(async (req, res) => {
 
         chat = await User.populate(chat, {
             path: "latestMessage.sender",
-            select: "name pic email"
+            select: "name picture email"
         })
 
         res.status(200).json(chat)
