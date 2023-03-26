@@ -12,6 +12,8 @@ import Home from "./pages/HomePage"
 import {QueryClient, QueryClientProvider} from 'react-query'
 import ChatProvider from "./Context/ChatProvider"
 
+import "./index.css"
+
 const queryClient = new QueryClient() 
 const router = createBrowserRouter([
   {
@@ -31,8 +33,6 @@ const router = createBrowserRouter([
   },
  
 ])
-
-
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

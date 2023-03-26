@@ -7,11 +7,16 @@ import { getSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
 import ProfileModal from './modals/ProfileModal'
 import UpdateGroupChatModal from './modals/UpdateGroupChatModal'
+import ScrollableChat from './ScrollableChat'
+import useSocket from "../../hooks/useSocket"
 
 const SingleChat = () => {
     
     const {user, selectedChat, setSelectedChat} = useChatContext()
     const [newMessage, newMessageSet] = useState("")
+    const socket = useSocket()
+    const [messages, setMessages] = useState([])
+    // var selectedChatCompare;
 
     const {
         mutate: mutateSendMessage,
@@ -19,14 +24,20 @@ const SingleChat = () => {
     } = useSendMessage({
         onSuccess: (data) => {
             newMessageSet("")
+            setMessages([...messages, data])
+            socket.emit("new message", data)
         }
     })
 
     const {
-        data,
         isLoading: fetchingMessages,
     } = useFetchMessages({
         chatId: selectedChat?._id
+    }, {
+        onSuccess: (data) => {
+            setMessages(data)
+            socket.emit("join chat", selectedChat?._id)
+        }
     })
 
     const sendMessage = (e) => {
@@ -43,10 +54,21 @@ const SingleChat = () => {
         // Typing Indicator Logic
     }
 
-    
     useEffect(() => {
-        console.log({selectedChat});
-    }, [selectedChat])
+        socket.emit("setup", user)
+    }, [socket])
+
+    useEffect(() => {
+        socket.on("message recieved", (newMessageRecieved) => {
+            if(selectedChat?._id !== newMessageRecieved.chat._id) {
+                // give notification
+
+            }
+            else {
+                setMessages([...messages, newMessageRecieved])
+            }
+        })
+    })
 
     if(!selectedChat) {
         return (
@@ -91,13 +113,14 @@ const SingleChat = () => {
         </Flex>
         <Flex
             w={"full"}
-            h={"full"}
+            h={"80vh"}
             bg={"gray.700"}
             rounded={"xl"}
             my={2}
             direction={"column"}
             justify={"space-between"}
             p={3}
+            // maxHeight={"100%"}
         >
             {/* Messages */}
             {fetchingMessages ? (
@@ -105,10 +128,8 @@ const SingleChat = () => {
                     <Spinner boxSize={22} />
                 </Center>
             ) : (
-                <Flex direction={"column"} gap={2}>
-                    {data?.map((message) => (
-                        <Badge key={message?._id} bg={user?._id === message?.sender?._id ? "teal" : "gray.600"} width={"max-content"} py={2} px={4} rounded={10} alignSelf={user?._id === message?.sender?._id ? "flex-end" : "flex-start"}>{message?.content}</Badge>
-                    ))}
+                <Flex direction={"column"} gap={2} overflow={"hidden"}>
+                    <ScrollableChat messages={messages} />
                 </Flex>
             )}
             <Flex align={"center"} gap={2} mt={3}>
