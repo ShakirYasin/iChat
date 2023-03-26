@@ -36,7 +36,7 @@ const UserChatItem = ({chat, handleFn}) => {
                 bg={"whiteAlpha.700"}
             />
             <Box>
-                <Text ml={selectedChat?._id === chat?._id ? 6 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat?._id === chat?._id ? "teal.300" : ""} >
+                <Text ml={selectedChat?._id === chat?._id ? 2 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat?._id === chat?._id ? "teal.300" : ""} >
                     {!chat.isGroup ? (
                     getSender(user, chat.users)?.name
                     ) : ( chat.chatName )}

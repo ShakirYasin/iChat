@@ -9,13 +9,29 @@ import ProfileModal from './modals/ProfileModal'
 import UpdateGroupChatModal from './modals/UpdateGroupChatModal'
 import ScrollableChat from './ScrollableChat'
 import useSocket from "../../hooks/useSocket"
+import animationData from "../animations/typing-indicator.json"
+import Lottie from "react-lottie"
+import useDebounce from '../../hooks/useDebounce'
+
+const defaultOptions = {
+    loop: true,
+    autoPlay: true,
+    animationData: animationData,
+    rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice"
+    }
+}
 
 const SingleChat = () => {
     
     const {user, selectedChat, setSelectedChat} = useChatContext()
     const [newMessage, newMessageSet] = useState("")
     const socket = useSocket()
+    const [socketConnected, setSocketConnected] = useState(false)
     const [messages, setMessages] = useState([])
+    const [guestTyping, setGuestTyping] = useState(false)
+    const [meTyping, setMeTyping] = useState(false)
+    const debouncedTyping = useDebounce(newMessage, 3000)
     // var selectedChatCompare;
 
     const {
@@ -42,6 +58,7 @@ const SingleChat = () => {
 
     const sendMessage = (e) => {
         if(e.key === "Enter" && newMessage) {
+            socket.emit("stop typing", selectedChat?._id)
             mutateSendMessage({
                 content: newMessage,
                 chatId: selectedChat?._id
@@ -50,12 +67,30 @@ const SingleChat = () => {
     }
     const typingHandler = (e) => {
         newMessageSet(e.target.value)
-
         // Typing Indicator Logic
+
+        if(!socketConnected) return
+        
+        if(!guestTyping) {
+            setMeTyping(true)
+            socket.emit("typing", selectedChat?._id)
+        }
     }
 
     useEffect(() => {
+        if(!meTyping) return
+
+        if(debouncedTyping && meTyping) {
+            socket.emit("stop typing", selectedChat?._id)
+            setMeTyping(false)    
+        }
+    }, [meTyping, debouncedTyping])
+
+    useEffect(() => {
         socket.emit("setup", user)
+        socket.on("connected", () => setSocketConnected(true))
+        socket.on("typing", () => setGuestTyping(true))
+        socket.on("stop typing", () => setGuestTyping(false))
     }, [socket])
 
     useEffect(() => {
@@ -124,7 +159,7 @@ const SingleChat = () => {
         >
             {/* Messages */}
             {fetchingMessages ? (
-                <Center>
+                <Center w={"full"} h={"full"}>
                     <Spinner boxSize={22} />
                 </Center>
             ) : (
@@ -132,8 +167,17 @@ const SingleChat = () => {
                     <ScrollableChat messages={messages} />
                 </Flex>
             )}
-            <Flex align={"center"} gap={2} mt={3}>
+            <Flex align={"flex-end"} gap={2} mt={3}>
                 <FormControl onKeyDown={sendMessage} isRequired>
+                    {guestTyping ? <Box>
+                        <Lottie 
+                            options={defaultOptions}
+                            width={50}
+                            height={25}
+                            style={{marginBottom: 15, marginLeft: 0}}
+                        />
+                    </Box> 
+                    : <></>}
                     <Input 
                         variant={"filled"} 
                         placeholder={"Enter a message"} 
