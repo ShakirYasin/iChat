@@ -138,7 +138,7 @@ const handleRemove = (user) => {
     if(selectedChat.groupAdmin?._id !== currentUser?._id && user?._id !== currentUser?._id) {
         toast({
             title: "DUDE!",
-            description: "Only Admins can add someone!",
+            description: "Only Admins can remove someone!",
             status: "error",
             duration: 5000,
             isClosable: true,

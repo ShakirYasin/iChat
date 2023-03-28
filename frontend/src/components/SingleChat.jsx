@@ -1,6 +1,6 @@
 import { ArrowBackIcon, ChatIcon, InfoOutlineIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, Center, Flex, FormControl, IconButton, Input, Spinner, Text, Tooltip } from '@chakra-ui/react'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSendMessage } from '../../hooks/useMutation'
 import { useFetchMessages } from '../../hooks/useQuery'
 import { getSender } from '../config/chatLogics'
@@ -12,6 +12,7 @@ import useSocket from "../../hooks/useSocket"
 import animationData from "../animations/typing-indicator.json"
 import Lottie from "react-lottie"
 import useDebounce from '../../hooks/useDebounce'
+import { useQueryClient } from 'react-query'
 
 const defaultOptions = {
     loop: true,
@@ -24,7 +25,7 @@ const defaultOptions = {
 
 const SingleChat = () => {
     
-    const {user, selectedChat, setSelectedChat} = useChatContext()
+    const {user, selectedChat, setSelectedChat, setNotifications, notifications, chats, setChats} = useChatContext()
     const [newMessage, newMessageSet] = useState("")
     const socket = useSocket()
     const [socketConnected, setSocketConnected] = useState(false)
@@ -32,7 +33,13 @@ const SingleChat = () => {
     const [guestTyping, setGuestTyping] = useState(false)
     const [meTyping, setMeTyping] = useState(false)
     const debouncedTyping = useDebounce(newMessage, 3000)
+    const chatRef = useRef(null)
+    const queryClient = useQueryClient()
     // var selectedChatCompare;
+
+    useEffect(() => {
+        console.log(messages[0]);
+    }, [messages])
 
     const {
         mutate: mutateSendMessage,
@@ -42,6 +49,7 @@ const SingleChat = () => {
             newMessageSet("")
             setMessages([...messages, data])
             socket.emit("new message", data)
+            setChats([selectedChat, ...chats.filter((c) => c._id !== selectedChat?._id)])
         }
     })
 
@@ -64,6 +72,13 @@ const SingleChat = () => {
                 chatId: selectedChat?._id
             })
         }
+    }
+    const sendMessageByButton = () => {
+        socket.emit("stop typing", selectedChat?._id)
+        mutateSendMessage({
+            content: newMessage,
+            chatId: selectedChat?._id
+        })
     }
     const typingHandler = (e) => {
         newMessageSet(e.target.value)
@@ -94,16 +109,25 @@ const SingleChat = () => {
     }, [socket])
 
     useEffect(() => {
-        socket.on("message recieved", (newMessageRecieved) => {
-            if(selectedChat?._id !== newMessageRecieved.chat._id) {
-                // give notification
+        chatRef.current = selectedChat
+        setGuestTyping(false)
+    }, [selectedChat])
 
+    useEffect(() => {
+        socket.on("message recieved", (newMessageRecieved) => {
+            if(!chatRef.current?._id || chatRef.current?._id !== newMessageRecieved.chat._id) {
+                // give notification
+                if(!notifications.includes(newMessageRecieved)) {
+                    setNotifications([newMessageRecieved, ...notifications])
+                    // queryClient.invalidateQueries({ queryKey: ['chats'] })
+                    setChats([newMessageRecieved?.chat, ...chats.filter((c) => c._id !== newMessageRecieved?.chat?._id)])
+                }
             }
             else {
                 setMessages([...messages, newMessageRecieved])
             }
         })
-    })
+    }, [socket, messages, chats, notifications])
 
     if(!selectedChat) {
         return (
@@ -186,7 +210,7 @@ const SingleChat = () => {
                     />
                 </FormControl>
                 <Tooltip label={"Send"} placement={"top"} hasArrow rounded={10}>
-                    <Button isLoading={isLoading}>
+                    <Button isLoading={isLoading} onClick={sendMessageByButton}>
                         <ChatIcon />
                     </Button>
                 </Tooltip>

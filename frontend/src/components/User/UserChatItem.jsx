@@ -1,11 +1,11 @@
-import { Avatar, Box, Flex, Image, Text } from '@chakra-ui/react'
+import { Avatar, Badge, Box, Flex, Image, Text } from '@chakra-ui/react'
 import React from 'react'
 import { getSender } from '../../config/chatLogics'
 import { useChatContext } from '../../Context/ChatProvider'
 
 const UserChatItem = ({chat, handleFn}) => {
     
-    const {user, selectedChat} = useChatContext()
+    const {user, selectedChat, notifications} = useChatContext()
 
   return (
     <Flex
@@ -35,13 +35,17 @@ const UserChatItem = ({chat, handleFn}) => {
                 borderStyle={"solid"}
                 bg={"whiteAlpha.700"}
             />
-            <Box>
+            <Box flexGrow={1}>
                 <Text ml={selectedChat?._id === chat?._id ? 2 : 0} transition={"margin 0.15s ease-in-out"} color={selectedChat?._id === chat?._id ? "teal.300" : ""} >
                     {!chat.isGroup ? (
                     getSender(user, chat.users)?.name
                     ) : ( chat.chatName )}
                 </Text>
             </Box>
+            {
+                notifications?.find((n) => n.chat._id === chat?._id) &&
+                <Badge bg={"teal"} width={"18px"} height={"18px"} display={'flex'} alignItems={'center'} justifyContent={"center"} textAlign={"center"} rounded={"2xl"} fontWeight={"600"}>{notifications?.filter((n) => n.chat._id === chat?._id)?.length}</Badge>
+            }
     </Flex>
   )
 }

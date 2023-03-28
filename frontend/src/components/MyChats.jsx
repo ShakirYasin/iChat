@@ -10,14 +10,13 @@ import UserChatItem from './User/UserChatItem'
 
 
 const MyChats = () => {
-  const {selectedChat, setSelectedChat, chats, setChats} = useChatContext()
+  const {selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications} = useChatContext()
   const [loggedUser, setLoggedUser] = useState(null)
   const toast = useToast();
   const {
     isLoading
   } = useFetchChats({
     onSuccess: (data) => {
-      console.log(data);
       setChats(data)
     },
     onError: (err) => {
@@ -31,6 +30,10 @@ const MyChats = () => {
         })  
     }
   })
+
+  const handleNotification = (chat) => {
+    setNotifications(notifications.filter((n) => n?.chat?._id !== chat?._id))
+  }
 
 
   return (
@@ -96,7 +99,10 @@ const MyChats = () => {
             <Stack overflowY={"auto"}>
                 {chats.map(chat => (
                   <UserChatItem 
-                    handleFn={() => setSelectedChat(chat)}
+                    handleFn={() => {
+                      setSelectedChat(chat)
+                      handleNotification(chat)
+                    }}
                     chat={chat}
                     key={chat?._id}
                   />

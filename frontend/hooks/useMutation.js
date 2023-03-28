@@ -163,7 +163,6 @@ export const useSendMessage = (options) => {
         {
             ...options,
             onSuccess: (data) => {
-                console.log({SendMessageResponse: data});
                 const latestMessage = {
                     ...data,
                     chat: data?.chat?._id
