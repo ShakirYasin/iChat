@@ -26,17 +26,17 @@ app.use('/api/message',  require('./routes/messageRoutes'))
 app.use(notFound)
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8080
 
 const server = app.listen(PORT, console.log(`Server Started on PORT ${PORT}`.yellow.bold))
 
 const io = require('socket.io')(server, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://127.0.0.1:5173"
+        origin: "*"
     }
 })
-
+   
 io.on("connection", (socket) => {
     console.log("Connected to the socket...");
 
