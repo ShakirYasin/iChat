@@ -36,7 +36,7 @@ const io = require('socket.io')(server, {
         origin: "*"
     }
 })
-
+   
 io.on("connection", (socket) => {
     console.log("Connected to the socket...");
 

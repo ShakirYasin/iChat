@@ -7,5 +7,5 @@ const useSocket = (endpoint = import.meta.env.VITE_SERVER_ENDPOINT) => {
   }), [endpoint]);
   return socket;
 };
-
+    
 export default useSocket;
