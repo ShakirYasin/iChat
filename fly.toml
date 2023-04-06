@@ -29,3 +29,7 @@ args = ["backend/server.js"]
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
+
+[experimental]
+  http3 = true
+  websockets = true
