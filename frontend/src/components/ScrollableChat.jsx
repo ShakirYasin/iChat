@@ -17,10 +17,10 @@ const ScrollableChat = ({messages}) => {
                     </Flex>
                 }
                 <Flex gap={2}>
-                    {isLastMessageFromSender(messages, i, user, selectedChat) ?
+                    {selectedChat?.isGroup && (isLastMessageFromSender(messages, i, user, selectedChat) ?
                         <Avatar src={message?.sender?.picture} boxSize={6} />
                         :
-                        <Box boxSize={6}></Box>
+                        <Box boxSize={6}></Box>) 
                     }
                     <Box key={message?._id} display={"flex"} bg={user?._id === message?.sender?._id ? "teal" : "gray.600"} width={"max-content"} py={"7px"} px={3} maxWidth={"70%"} mb={2} rounded={10} ml={user?._id === message?.sender?._id ? "auto" : "0"}>
                         <Text fontSize={"14px"} fontWeight={"600"}>{message?.content}</Text>
