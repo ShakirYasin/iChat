@@ -11,12 +11,12 @@ const ScrollableChat = ({messages}) => {
         {messages?.length > 0 && messages?.map((message, i) => (
             <Box>
                 {isFirstMessageFromSender(messages, i, user, selectedChat) && 
-                    <Flex>
+                    <Flex className='my-emoji'>
                         <Box width={8}></Box>
                         <Text pl={1} pb={1} fontSize={"12px"} color={"whiteAlpha.600"} >{message?.sender?.name}</Text>
                     </Flex>
                 }
-                <Flex gap={2}>
+                <Flex gap={2} className='my-emoji'>
                     {selectedChat?.isGroup && (isLastMessageFromSender(messages, i, user, selectedChat) ?
                         <Avatar src={message?.sender?.picture} boxSize={6} />
                         :

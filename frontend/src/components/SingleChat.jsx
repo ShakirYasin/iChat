@@ -1,5 +1,5 @@
-import { ArrowBackIcon, ChatIcon, InfoOutlineIcon, SettingsIcon } from '@chakra-ui/icons'
-import { Badge, Box, Button, Center, Flex, FormControl, IconButton, Input, Spinner, Text, Tooltip } from '@chakra-ui/react'
+import { ArrowBackIcon, ChatIcon, Icon, InfoOutlineIcon, SettingsIcon } from '@chakra-ui/icons'
+import { Badge, Box, Button, Center, Flex, FormControl, IconButton, Input, Popover, PopoverBody, PopoverContent, PopoverTrigger, Spinner, Text, Tooltip } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSendMessage } from '../../hooks/useMutation'
 import { useFetchMessages } from '../../hooks/useQuery'
@@ -13,6 +13,8 @@ import animationData from "../animations/typing-indicator.json"
 import Lottie from "react-lottie"
 import useDebounce from '../../hooks/useDebounce'
 import { useQueryClient } from 'react-query'
+import EmojiPicker from 'emoji-picker-react';
+import {MdEmojiEmotions} from "react-icons/md"
 
 const defaultOptions = {
     loop: true,
@@ -65,7 +67,7 @@ const SingleChat = () => {
     })
 
     const sendMessage = (e) => {
-        if(e.key === "Enter" && newMessage) {
+        if(e.key === "Enter" && newMessage !== " ") {
             socket.emit("stop typing", selectedChat?._id)
             mutateSendMessage({
                 content: newMessage,
@@ -74,11 +76,13 @@ const SingleChat = () => {
         }
     }
     const sendMessageByButton = () => {
-        socket.emit("stop typing", selectedChat?._id)
-        mutateSendMessage({
-            content: newMessage,
-            chatId: selectedChat?._id
-        })
+        if(newMessage !== " ") {
+            socket.emit("stop typing", selectedChat?._id)
+            mutateSendMessage({
+                content: newMessage,
+                chatId: selectedChat?._id
+            })
+        }
     }
     const typingHandler = (e) => {
         newMessageSet(e.target.value)
@@ -191,24 +195,43 @@ const SingleChat = () => {
                     <ScrollableChat messages={messages} />
                 </Flex>
             )}
-            <Flex align={"flex-end"} gap={2} mt={3}>
-                <FormControl onKeyDown={sendMessage} isRequired>
-                    {guestTyping ? <Box>
-                        <Lottie 
-                            options={defaultOptions}
-                            width={50}
-                            height={25}
-                            style={{marginBottom: 15, marginLeft: 0}}
+            {guestTyping ? <Box>
+                <Lottie 
+                    options={defaultOptions}
+                    width={50}
+                    height={25}
+                    style={{marginBottom: 15, marginLeft: 0}}
+                />
+            </Box> 
+            : <></>}
+            <Flex align={"flex-end"} gap={2} mt={guestTyping ? 0 : 3}>
+                <Flex align={"center"} gap={3} width={"full"} >
+                    <Popover placement='top-start'>
+                        <PopoverTrigger>
+                            <Button px={2} py={2} flexShrink={0} bg={"whiteAlpha.200"} rounded={"md"} >
+                                <Icon as={MdEmojiEmotions} boxSize={25} />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent border={0}>
+                            <PopoverBody p={0}>    
+                                <EmojiPicker theme='auto' emojiStyle='apple' lazyLoadEmojis previewConfig={{
+                                    showPreview: false
+                                }} onEmojiClick={(emoji) => {
+                                    newMessageSet(prev => (prev + emoji.emoji))
+                                }} /> 
+                            </PopoverBody>
+                        </PopoverContent>
+                    </Popover>
+                    <FormControl onKeyDown={sendMessage} isRequired>
+                        <Input 
+                            variant={"filled"} 
+                            placeholder={"Enter a message"} 
+                            value={newMessage}
+                            onChange={typingHandler}
+                            className='my-emoji'
                         />
-                    </Box> 
-                    : <></>}
-                    <Input 
-                        variant={"filled"} 
-                        placeholder={"Enter a message"} 
-                        value={newMessage}
-                        onChange={typingHandler}
-                    />
-                </FormControl>
+                    </FormControl>
+                </Flex>
                 <Tooltip label={"Send"} placement={"top"} hasArrow rounded={10}>
                     <Button isLoading={isLoading} onClick={sendMessageByButton}>
                         <ChatIcon />

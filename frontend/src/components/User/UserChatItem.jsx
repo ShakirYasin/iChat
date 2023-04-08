@@ -24,6 +24,9 @@ const UserChatItem = ({chat, handleFn}) => {
         px={3}
         py={3}
         key={chat._id}
+        minHeight={"79px"}
+        maxWidth={"98%"}
+        mr={2}
         >
             <Avatar 
                 src={chat?.isGroup ? chat?.groupImage : getSender(user, chat.users)?.picture}

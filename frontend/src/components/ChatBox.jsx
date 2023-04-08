@@ -15,6 +15,7 @@ const ChatBox = () => {
       p={3}
       px={5}
       w={{base: "full", md: "70%", xl: "75%", "2xl": "83%"}}
+      maxWidth={{base: "full", md: "70%", xl: "75%", "2xl": "83%"}}
       borderRadius={"lg"}
       borderWidth={"1px"}
     >

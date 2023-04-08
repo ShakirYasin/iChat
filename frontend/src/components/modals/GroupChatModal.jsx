@@ -164,6 +164,9 @@ const handleCreate = (e) => {
                   </Flex>
                   <Box
                     display={selectedUsers.length > 0 ? "flex" : "none"}
+                    maxWidth={"100%"}
+                    overflow={"hidden"}
+                    flexWrap={"wrap"}
                     gap={2}
                   >
                     {selectedUsers.map(user => (

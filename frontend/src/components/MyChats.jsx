@@ -42,6 +42,7 @@ const MyChats = () => {
       flexDir={"column"}
       py={3}
       w={{base: "full", md: "30%", xl: "25%", "2xl": "17%"}}
+      maxWidth={{base: "full", md: "30%", xl: "25%", "2xl": "17%"}}
       borderRadius={"lg"}
       borderWidth={"1px"}
     >
@@ -96,7 +97,15 @@ const MyChats = () => {
           !chats.length ? 
             <Text align={"center"} color={"whiteAlpha.700"}>Chats Not Found</Text>
           : (
-            <Stack overflowY={"auto"}>
+            <Stack overflowY={"auto"} maxHeight={"90vh"} sx={{
+              "::-webkit-scrollbar": {
+                width: "7px"
+              },
+              "::-webkit-scrollbar-thumb": {
+                backgroundColor: "teal",
+                borderRadius: "10px",
+              }
+            }}>
                 {chats.map(chat => (
                   <UserChatItem 
                     handleFn={() => {

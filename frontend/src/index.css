@@ -72,3 +72,7 @@ button:focus-visible {
   scrollbar-width: none;
 
 }
+
+.my-emoji {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', 'Android Emoji', 'EmojiSymbols';
+}
